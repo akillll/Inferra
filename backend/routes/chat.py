@@ -11,12 +11,12 @@ from services.chat_service import (
     get_conversation_messages
 )
 
-from services.openai_service import generate_response
+from llm_sdk.client import generate_llm_response
 
 router = APIRouter()
 
 @router.post("/chat")
-def chat(request: ChatRequest, db: Session = Depends(get_db_session)):
+async def chat(request: ChatRequest, db: Session = Depends(get_db_session)):
 
     if request.conversation_id:
         conversation_id = request.conversation_id
@@ -44,7 +44,7 @@ def chat(request: ChatRequest, db: Session = Depends(get_db_session)):
         for msg in history
     ]
 
-    assistant_reply = generate_response(messages)
+    assistant_reply = generate_llm_response(messages, conversation_id)
 
     save_message(
         db,
