@@ -6,6 +6,7 @@ from routes.health import router as health_router
 from routes.chat import router as chat_router
 from routes.ingestion import router as ingestion_router
 from routes.metrics import router as metrics_router
+from utils.rate_limit import rate_limit_middleware
 
 def create_app() -> FastAPI:
     settings = get_settings()
@@ -14,13 +15,18 @@ def create_app() -> FastAPI:
         version=settings.api_version,
         debug=settings.debug,
     )
+
+    app.middleware("http") (
+        rate_limit_middleware
+    )
+    
     app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
-)
+    )
 
 
     app.include_router(health_router)

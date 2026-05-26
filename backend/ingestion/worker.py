@@ -18,7 +18,7 @@ def start_worker():
             db = SessionLocal()
             log = InferenceLog(**payload)
 
-            db.add()
+            db.add(log)
             db.commit()
             db.close()
         

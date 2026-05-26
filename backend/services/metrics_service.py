@@ -65,15 +65,16 @@ def get_provider_usage(db: Session):
         for row in rows
     ]
 
-
 def get_requests_per_minute(db: Session):
+
+    minute_bucket = func.date_trunc(
+        "minute",
+        InferenceLog.created_at
+    )
 
     rows = db.query(
 
-        func.date_trunc(
-            "minute",
-            InferenceLog.created_at
-        ),
+        minute_bucket,
 
         func.count(
             InferenceLog.id
@@ -81,17 +82,11 @@ def get_requests_per_minute(db: Session):
 
     ).group_by(
 
-        func.date_trunc(
-            "minute",
-            InferenceLog.created_at
-        )
+        minute_bucket
 
     ).order_by(
 
-        func.date_trunc(
-            "minute",
-            InferenceLog.created_at
-        )
+        minute_bucket
 
     ).all()
 

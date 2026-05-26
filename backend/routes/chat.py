@@ -106,11 +106,12 @@ async def chat_stream(
 
         try:
 
-            async for token in stream_llm_response(messages):
+            async for chunk in stream_llm_response(messages, current_conversation_id):
 
                 if not active_streams.get(stream_id):
                     break
 
+                token = chunk["value"]
                 full_response += token
 
                 yield f"data: {token}\n\n"
