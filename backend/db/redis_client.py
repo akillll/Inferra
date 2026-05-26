@@ -1,11 +1,10 @@
-import redis
-import os
-from dotenv import load_dotenv
+from redis import Redis
 
-load_dotenv()
+from core.config import get_settings
 
-redis_client = redis.Redis(
-    host=os.getenv("REDIS HOST", "localhost"),
-    port=6379,
+settings = get_settings()
+
+redis_client = Redis.from_url(
+    settings.redis_url,
     decode_responses=True
 )

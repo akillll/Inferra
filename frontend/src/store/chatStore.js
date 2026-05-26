@@ -8,6 +8,8 @@ const useChatStore = create((set) => ({
 
   conversations: [],
 
+  conversationsVersion: 0,
+
 
   setConversationId: (id) =>
     set({
@@ -30,12 +32,32 @@ const useChatStore = create((set) => ({
     })),
 
 
+  appendToMessage: (id, token) =>
+    set((state) => ({
+      messages: state.messages.map((message) =>
+        message.id === id
+          ? {
+              ...message,
+              content: message.content + token
+            }
+          : message
+      ),
+    })),
+
+
   setConversations: (
     conversations
   ) =>
     set({
       conversations
     }),
+
+
+  refreshConversations: () =>
+    set((state) => ({
+      conversationsVersion:
+        state.conversationsVersion + 1
+    })),
 
 }));
 

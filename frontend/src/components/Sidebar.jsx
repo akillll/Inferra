@@ -11,6 +11,7 @@ export default function Sidebar() {
 
   const {
     conversations,
+    conversationsVersion,
     setConversations,
     setConversationId,
     setMessages
@@ -20,28 +21,36 @@ export default function Sidebar() {
 
     loadConversations();
 
-  }, []);
+  }, [conversationsVersion]);
 
 
   const loadConversations =
     async () => {
 
-      const data =
-        await getConversations();
+      try {
+        const data =
+          await getConversations();
 
-      setConversations(data);
+        setConversations(data);
+      } catch (error) {
+        console.error(error);
+      }
     };
 
 
   const openConversation =
     async (id) => {
 
-      const messages =
-        await getConversationMessages(id);
+      try {
+        const messages =
+          await getConversationMessages(id);
 
-      setConversationId(id);
+        setConversationId(id);
 
-      setMessages(messages);
+        setMessages(messages);
+      } catch (error) {
+        console.error(error);
+      }
     };
 
   return (

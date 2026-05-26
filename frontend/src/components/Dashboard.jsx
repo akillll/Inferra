@@ -22,6 +22,8 @@ export default function Dashboard() {
 
   const [metrics, setMetrics] =
     useState(null);
+  const [error, setError] =
+    useState("");
 
   useEffect(() => {
 
@@ -41,11 +43,20 @@ export default function Dashboard() {
   const loadMetrics =
     async () => {
 
-      const data =
-        await getMetrics();
+      try {
+        const data =
+          await getMetrics();
 
-      setMetrics(data);
+        setMetrics(data);
+        setError("");
+      } catch (err) {
+        setError(err.message);
+      }
     };
+
+  if (error) {
+    return <div className="p-6 text-sm text-red-700">{error}</div>;
+  }
 
   if (!metrics) {
     return <div>Loading...</div>;

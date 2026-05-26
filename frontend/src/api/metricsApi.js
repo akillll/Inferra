@@ -1,4 +1,4 @@
-const API = "http://localhost:8000";
+const API = import.meta.env.VITE_API_BASE_URL || "http://localhost:8000";
 
 export const getMetrics =
   async () => {
@@ -6,6 +6,10 @@ export const getMetrics =
     const response = await fetch(
       `${API}/metrics`
     );
+
+    if (!response.ok) {
+      throw new Error("Failed to load metrics");
+    }
 
     return response.json();
   };
