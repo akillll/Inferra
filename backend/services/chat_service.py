@@ -11,6 +11,26 @@ def create_conversation(db: Session):
 
     return conversation
 
+def update_conversation_title(
+    db: Session,
+    conversation_id,
+    message
+):
+    conversation = db.query(
+        Conversation
+    ).filter(
+        Conversation.id == conversation_id
+    ).first()
+
+    if (
+        conversation and
+        not conversation.title
+    ):
+        conversation.title = (
+            message[:40]
+        )
+        db.commit()
+
 def save_message(
         db: Session,
         conversation_id,

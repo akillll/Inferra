@@ -12,7 +12,8 @@ from services.chat_service import (
     create_conversation,
     save_message,
     get_conversation_messages,
-    get_all_conversations
+    get_all_conversations,
+    update_conversation_title
 )
 
 from llm_sdk.client import stream_llm_response
@@ -74,6 +75,13 @@ async def chat_stream(
         "user",
         message
     )
+
+    update_conversation_title(
+    db,
+    current_conversation_id,
+    message
+    )
+
 
     history = get_conversation_messages(
         db,
