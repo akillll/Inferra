@@ -1,34 +1,71 @@
-const navigationItems = [
-  { label: "Chat", href: "#chat", active: true },
-  { label: "Models", href: "#models", active: false },
-  { label: "Ingestion", href: "#ingestion", active: false },
-  { label: "Settings", href: "#settings", active: false },
-];
+import { useEffect } from "react";
 
-function Sidebar() {
+import useChatStore from "../store/chatStore";
+
+import {
+  getConversations,
+  getConversationMessages
+} from "../api/chatApi.js";
+
+export default function Sidebar() {
+
+  const {
+    conversations,
+    setConversations,
+    setConversationId,
+    setMessages
+  } = useChatStore();
+
+  useEffect(() => {
+
+    loadConversations();
+
+  }, []);
+
+
+  const loadConversations =
+    async () => {
+
+      const data =
+        await getConversations();
+
+      setConversations(data);
+    };
+
+
+  const openConversation =
+    async (id) => {
+
+      const messages =
+        await getConversationMessages(id);
+
+      setConversationId(id);
+
+      setMessages(messages);
+    };
+
   return (
-    <aside className="flex h-full w-64 shrink-0 flex-col border-r border-slate-200 bg-white">
-      <div className="border-b border-slate-200 px-5 py-4">
-        <p className="text-lg font-semibold text-slate-950">Inferra</p>
+    <div className="w-80 border-r h-screen overflow-y-auto">
+
+      <div className="p-4 font-bold text-lg">
+        Conversations
       </div>
 
-      <nav className="flex-1 space-y-1 px-3 py-4">
-        {navigationItems.map((item) => (
-          <a
-            key={item.label}
-            href={item.href}
-            className={`block rounded-md px-3 py-2 text-sm font-medium ${
-              item.active
-                ? "bg-slate-950 text-white"
-                : "text-slate-600 hover:bg-slate-100 hover:text-slate-950"
-            }`}
+      {
+        conversations.map((c) => (
+
+          <div
+            key={c.id}
+            onClick={() =>
+              openConversation(c.id)
+            }
+            className="p-4 border-b cursor-pointer hover:bg-gray-100"
           >
-            {item.label}
-          </a>
-        ))}
-      </nav>
-    </aside>
+            {c.title || "New Chat"}
+          </div>
+
+        ))
+      }
+    </div>
   );
 }
-
-export default Sidebar;

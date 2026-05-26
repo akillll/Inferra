@@ -66,3 +66,14 @@ async def generate_llm_response(
         await send_log(log_payload)
 
         raise e
+    
+async def stream_llm_response(
+        messages
+):
+    stream = await provider.stream_chat(messages)
+
+    async for chunk in stream:
+        delta = chunk.choices[0].delta.content
+
+        if delta:
+            yield delta

@@ -36,3 +36,9 @@ def get_conversation_messages(db: Session, conversation_id):
         .order_by(Message.created_at.asc())
         .all()
     )
+
+def get_all_conversations(db: Session):
+    return (
+        db.query(Conversation)
+        .order_by(Conversation.updated_at.desc()).all()
+    )

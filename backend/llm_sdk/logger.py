@@ -1,16 +1,14 @@
-import httpx
-import asyncio
-from datetime import datetime
+import json
 
-INGESTION_URL = "http://localhost:8000/ingest"
+from db.redis_client import redis_client
+
+QUEUE_NAME = "inference_logs"
 
 async def send_log(payload):
-    async with httpx.AsyncClient() as client:
-        try:
-            await client.post(
-                INGESTION_URL,
-                json=payload,
-                timeout=2
-            )
-        except Exception:
-            pass
+    try:
+        redis_client.rpush(
+            QUEUE_NAME,
+            json.dumps(payload)
+        )
+    except Exception:
+        pass
