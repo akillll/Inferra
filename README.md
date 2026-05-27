@@ -120,6 +120,44 @@ inferra/
 └── README.md
 ```
 
+## Docker Setup
+
+One-command startup:
+
+```bash
+cp .env.example .env
+docker compose up --build
+```
+
+Services:
+
+- Frontend: `http://localhost:5173`
+- Backend API: `http://localhost:8000`
+- Health check: `http://localhost:8000/health`
+- PostgreSQL: `localhost:5432`
+- Redis: `localhost:6379`
+
+The Docker setup includes:
+
+- Frontend hot reload through Vite
+- Backend hot reload through Uvicorn
+- Persistent PostgreSQL volume
+- Persistent Redis data volume
+- Dedicated worker container
+- Service health checks
+- Startup wait script for Postgres and Redis
+- Automatic Alembic migration on backend startup
+
+## Environment Variables
+
+Copy `.env.example` to `.env`.
+
+Important:
+
+- Inside Docker, backend services use `postgres` and `redis` hostnames.
+- In the browser, `VITE_API_BASE_URL` should usually be `http://localhost:8000`.
+
+
 ## Local Setup
 
 Prerequisites:
@@ -155,60 +193,6 @@ cd backend
 source venv/bin/activate
 python run_worker.py
 ```
-
-## Docker Setup
-
-One-command startup:
-
-```bash
-cp .env.example .env
-docker compose up --build
-```
-
-Services:
-
-- Frontend: `http://localhost:5173`
-- Backend API: `http://localhost:8000`
-- Health check: `http://localhost:8000/health`
-- PostgreSQL: `localhost:5432`
-- Redis: `localhost:6379`
-
-The Docker setup includes:
-
-- Frontend hot reload through Vite
-- Backend hot reload through Uvicorn
-- Persistent PostgreSQL volume
-- Persistent Redis data volume
-- Dedicated worker container
-- Service health checks
-- Startup wait script for Postgres and Redis
-- Automatic Alembic migration on backend startup
-
-## Environment Variables
-
-Copy `.env.example` to `.env`.
-
-| Variable | Purpose |
-| --- | --- |
-| `PROJECT_NAME` | FastAPI project name |
-| `API_VERSION` | API version metadata |
-| `DEBUG` | Backend debug flag |
-| `BACKEND_HOST` | Backend bind host |
-| `BACKEND_PORT` | Backend port |
-| `VITE_API_BASE_URL` | Browser-facing backend URL |
-| `DATABASE_URL` | SQLAlchemy PostgreSQL connection string |
-| `REDIS_URL` | Redis connection string |
-| `POSTGRES_DB` | PostgreSQL database name |
-| `POSTGRES_USER` | PostgreSQL user |
-| `POSTGRES_PASSWORD` | PostgreSQL password |
-| `OPENAI_API_KEY` | OpenAI API key |
-| `RUN_MIGRATIONS` | Run Alembic migrations at startup |
-| `RUN_RELOAD` | Enable backend hot reload in Docker |
-
-Important:
-
-- Inside Docker, backend services use `postgres` and `redis` hostnames.
-- In the browser, `VITE_API_BASE_URL` should usually be `http://localhost:8000`.
 
 ## Database Schema
 
@@ -367,7 +351,7 @@ Practical next steps before higher traffic:
 - Move queue handling to a stronger job primitive if strict delivery guarantees are required.
 - Add per-user or per-api-key scoping before multi-tenant use.
 - Add structured application logging and request ids across API, SDK, and worker.
-- Add provider timeout controls and circuit-breaker style protection around upstream LLM calls.
+
 
 ## Future Improvements
 
@@ -380,22 +364,6 @@ Practical next steps before higher traffic:
 - Integration tests for SSE streaming and worker ingestion
 - Dead-letter queue for repeatedly failing log payloads
 - Dashboard date-range filters
-
-## Screenshots
-
-Add screenshots before submission:
-
-```text
-docs/screenshots/chat.png
-docs/screenshots/dashboard.png
-docs/screenshots/conversation-history.png
-```
-
-Suggested views:
-
-- Chat with active streamed assistant response
-- Dashboard with request and provider metrics
-- Conversation sidebar with saved history
 
 ## Demo Instructions
 
@@ -423,6 +391,30 @@ Suggested views:
 5. Watch the response stream into the assistant message.
 
 6. Confirm logs are ingested by checking the dashboard after the worker processes the Redis queue.
+
+## Development Approach
+
+The project was built iteratively in phases rather than attempting a fully designed system upfront.
+
+Development process:
+1. Defined architecture and system boundaries first
+2. Implemented core chat + streaming flow
+3. Added inference logging and ingestion
+4. Added observability and reliability features
+5. Performed architecture and code review passes
+6. Hardened streaming, queue handling, and frontend state management
+
+AI-assisted tooling (Codex/LLM tools) was used for:
+- project scaffolding
+- repetitive boilerplate generation
+- implementation acceleration
+- code review assistance
+- docker compose setup
+- README drafting
+
+All architectural decisions, debugging, integration, system design, and final implementation validation were handled manually.
+
+The focus was on building a practical, production-oriented MVP while keeping the system intentionally lightweight and easy to reason about.
 
 ## Common Troubleshooting
 
