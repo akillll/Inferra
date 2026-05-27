@@ -1,14 +1,12 @@
-import {
-  useEffect,
-  useRef,
-  useState
-} from "react";
+import { useEffect, useRef, useState } from "react";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 
 import useChatStore from "../store/chatStore";
 
 import {
   cancelStream as cancelStreamRequest,
-  streamMessage
+  streamMessage,
 } from "../api/chatApi";
 
 const createMessageId = () =>
@@ -125,7 +123,9 @@ export default function ChatBox() {
         <div>
           <h1 className="text-base font-semibold text-slate-950">Chat</h1>
           <p className="text-xs text-slate-500">
-            {conversationId ? "Conversation active" : "Start a new conversation"}
+            {conversationId
+              ? "Conversation active"
+              : "Start a new conversation"}
           </p>
         </div>
 
@@ -167,13 +167,17 @@ export default function ChatBox() {
                       : "border border-slate-200 bg-white text-slate-800"
                   }`}
                 >
-                  <div className={`mb-1 text-xs font-medium ${
-                    isUser ? "text-slate-300" : "text-slate-500"
-                  }`}>
+                  <div
+                    className={`mb-1 text-xs font-medium ${
+                      isUser ? "text-slate-300" : "text-slate-500"
+                    }`}
+                  >
                     {isUser ? "You" : "Inferra"}
                   </div>
-                  <div className="whitespace-pre-wrap break-words">
-                    {msg.content || (msg.role === "assistant" ? "..." : "")}
+                  <div className="prose prose-sm max-w-none break-words prose-slate">
+                    <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                      {msg.content || (msg.role === "assistant" ? "..." : "")}
+                    </ReactMarkdown>
                   </div>
                 </div>
               </div>

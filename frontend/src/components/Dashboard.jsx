@@ -43,7 +43,7 @@ export default function Dashboard() {
 
     const interval = setInterval(
       loadMetrics,
-      50000
+      5000
     );
 
     return () =>

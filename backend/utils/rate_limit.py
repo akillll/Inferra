@@ -5,14 +5,23 @@ from db.redis_client import (
     redis_client
 )
 
-RATE_LIMIT = 100
+RATE_LIMIT = 15
 
+EXCLUDED_PATHS = {
+    "/metrics",
+    "/ingest",
+    "/health"
+}
 
 async def rate_limit_middleware(
     request: Request,
     call_next
 ):
+    path = request.url.path
 
+    if path in EXCLUDED_PATHS:
+        return await call_next(request)
+    
     ip = request.client.host
 
     key = f"rate_limit:{ip}"
